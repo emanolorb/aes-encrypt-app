@@ -6,19 +6,13 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
-import java.math.BigDecimal
-import java.math.BigInteger
-import javax.crypto.Mac
 import javax.crypto.spec.GCMParameterSpec
-import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+import java.util.*
+import kotlin.collections.ArrayList
 
-import java.security.SecureRandom
-import kotlin.experimental.and
 
 class MainActivity : AppCompatActivity() {
-    val secureRandom = SecureRandom()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,18 +22,20 @@ class MainActivity : AppCompatActivity() {
 
         btEncript.setOnClickListener(View.OnClickListener {
 
-
-
+            val noncebyte = getNonce(12)
             val testVal = etString.text.toString()
             val testBA = testVal.toByteArray(Charsets.UTF_8)
-            println("cadena a encriptar en byteArray--------------")
-            println(testBA)
             val keybyte = hexStringToByteArray("160ee4da151a47b33347384eb4ee541a")
-            val noncebyte = hexStringToByteArray("4c43bfd227b20c0bc78423ec")
-            println("antes de encriptar ----------------")
+            // val noncebyte = hexStringToByteArray("8aacf99a3b6898cfed10518b")
+
+            var nonceStrHex = noncebyte.toHexString()
+            println("----------noncestr-----------")
+            println(nonceStrHex)
+            println("------------------------------")
+
 
             var resultado = encryptGcm(testBA, keybyte, noncebyte)
-            println("resultado -1111111---------------")
+            println("resultado encryptGcm---------------")
             println(resultado.ciphertext.contentToString())
             println(resultado.ciphertext.toString())
             var strhex = resultado.ciphertext.toHexString()
@@ -78,8 +74,6 @@ class MainActivity : AppCompatActivity() {
         cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmSpec)
 
         val ciphertext = cipher.doFinal(plaintext)
-        println("me lleva la que me trajo")
-        println(ciphertext.toString())
         return Ciphertext(ciphertext, nonce)
     }
 
@@ -94,8 +88,6 @@ class MainActivity : AppCompatActivity() {
         cipher.init(Cipher.DECRYPT_MODE, keySpec, gcmSpec)
 
         val plaintext = cipher.doFinal(ciphertext.ciphertext)
-        println("me lleva la que me trajo2222")
-        println(plaintext.toString())
         return plaintext
     }
 
@@ -119,5 +111,11 @@ class MainActivity : AppCompatActivity() {
         return this.joinToString("") {
             java.lang.String.format("%02x", it)
         }
+    }
+    fun getNonce(sizeVar:Int):ByteArray
+    {
+        val b = ByteArray(sizeVar)
+        Random().nextBytes(b)
+        return b
     }
 }
