@@ -26,11 +26,11 @@ class MainActivity : AppCompatActivity() {
             val testVal = etString.text.toString()
             val testBA = testVal.toByteArray(Charsets.UTF_8)
             val keybyte = hexStringToByteArray("160ee4da151a47b33347384eb4ee541a")
-            // val noncebyte = hexStringToByteArray("8aacf99a3b6898cfed10518b")
 
             var nonceStrHex = noncebyte.toHexString()
             println("----------noncestr-----------")
             println(nonceStrHex)
+            tvNonce.text = nonceStrHex
             println("------------------------------")
 
 
@@ -52,24 +52,15 @@ class MainActivity : AppCompatActivity() {
             println(output2)
             tvRestultado.text = strhex
             println("-------------------------------")
-            Toast.makeText(this, "hola mundo", Toast.LENGTH_LONG).show()
         })
     }
 
     fun encryptGcm(plaintext: ByteArray, key: ByteArray, nonce: ByteArray): Ciphertext {
-        println("entrando en encript ----------------")
 
         val cipher = Cipher.getInstance("AES_128/GCM/NoPadding")
         val keySpec = SecretKeySpec(key, "AES_128")
 
         val gcmSpec = GCMParameterSpec(128, nonce) // 128 bit authentication tag
-
-        println("despues del auth tag ----------------")
-        println("keyspect ----------------")
-        println(keySpec)
-        println("gcmSpec ----------------")
-        println(gcmSpec)
-
 
         cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmSpec)
 
@@ -102,9 +93,12 @@ class MainActivity : AppCompatActivity() {
         for (i in 0 until hexChunked.count()) {
             bytesArray[i] = hexChunked[i].toByte()
         }
-        println("bytearray paricin----------------------------")
+        println("hexStringToByteArray ----------------------------")
+        println("String")
         println(bytesArray)
-
+        println("ByteArray")
+        println(bytesArray)
+        println("-------------------------------------------------")
         return bytesArray
     }
     fun ByteArray.toHexString() : String {
